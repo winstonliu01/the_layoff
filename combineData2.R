@@ -120,7 +120,7 @@ financial <- financial %>% group_by(tic, year) %>%
 
 stock <- subset(stock, 
                 select = -c(PERMNO, NAMEENDT, SHRCD, EXCHCD, SICCD, NCUSIP, SHRCLS, TSYMBOL, 
-                            NAICS, PRIMEXCH, TRDSTAT, SECSTAT, PERMCO, ISSUNO, HEXCD, HSICIG,
+                            PRIMEXCH, TRDSTAT, SECSTAT, PERMCO, ISSUNO, HEXCD, HSICIG,
                             HSICCD, CUSIP, SHRFLG, HSICMG, SPREAD, SHRENDDT,
                             ALTPRC, ALTPRCDT, RETX, BIDLO, ASKHI, PRC, VOL,
                             RET, BID, ASK, SHROUT, RETX, dateFormatted, date)) %>% 
@@ -130,9 +130,8 @@ financial <- subset(financial, select = -c(24:40)) %>%
              subset(select = 
                  -c(gvkey, datadate, fyr, fqtr, indfmt, consol, popsrc, datafmt, 
                     cusip, curcdq, datacqtr, datafqtr, cik, costat, exchg, revty,
-                    cshtrq, mkvaltq, sic, fic)) %>% 
-             ungroup() %>% group_by(tic, year) %>% distinct() %>% 
-             rename(TICKER = tic)
+                    cshtrq, mkvaltq, sic, fic)) %>% rename(TICKER = tic) %>%
+             ungroup() %>% group_by(TICKER, year) %>% distinct() 
 
 finances <- full_join(stock, financial) %>% 
             subset(select = -c(conm)) %>%
@@ -162,7 +161,7 @@ master <- full_join(finances, executive)
 master <- master[1:10902,]
 
 dataCombined <- master %>% 
-  rename(ticker = TICKER, compName = COMNAM, ceoName = EXEC_FULLNAME,
+  rename(ticker = TICKER, compName = COMNAM, industry = NAICS, ceoName = EXEC_FULLNAME,
           ceoStart = BECAMECEO, ceoEnd = LEFTOFC, ceoComp1 = TDC1, ceoComp2 = TDC2,
           ceoSalPctChg = SAL_PCT,ceoShares = SHROWN_TOT, ceoGender = GENDER,
           ceoChg = ceoChange)
